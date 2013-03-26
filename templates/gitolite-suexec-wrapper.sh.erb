@@ -1,0 +1,17 @@
+#!/bin/bash
+
+#
+# Wrapper for gl-auth-command
+#
+
+USER=$1
+if [ ! -z $USER ]; then
+  # if we are authenticated we export all repos
+  export GIT_HTTP_EXPORT_ALL=true
+fi
+
+
+export GIT_PROJECT_ROOT='<%= repos_path %>'
+export GITOLITE_HTTP_HOME='<%= base_dir %>'
+
+exec /usr/share/gitolite3/gitolite-shell $USER

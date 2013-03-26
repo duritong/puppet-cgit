@@ -1,0 +1,70 @@
+    SetEnv GIT_PROJECT_ROOT <%= repos_dir %>
+
+    Alias /cgit-data /usr/share/cgit
+
+    SuexecUserGroup <%= user %> <%= group %>
+
+<% if vhost_part == :ssl -%>
+    ScriptAliasMatch "(?x)^/_gl/(.*/(HEAD | \
+                       info/refs | \
+                       objects/(info/[^/]+ | \
+                         [0-9a-f]{2}/[0-9a-f]{38} | \
+                         pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
+                       git-(upload|receive)-pack))$" \
+                       /var/www/git_suexec/scritch/gitolite-suexec-wrapper.sh/$1
+<% end -%>
+
+    ScriptAliasMatch "(?x)^/(.*/(HEAD | \
+                       info/refs | \
+                       objects/(info/[^/]+ | \
+                         [0-9a-f]{2}/[0-9a-f]{38} | \
+                         pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
+                       git-(upload|receive)-pack))$" \
+                       /var/www/git_suexec/scritch/gitolite-suexec-wrapper.sh/$1
+
+    ScriptAlias / /var/www/git_suexec/<%= name %>/cgit-suexec-wrapper.sh/
+
+    RewriteEngine On
+    # Detect git push -> do not allow anonymous push
+    RewriteCond %{QUERY_STRING} service=git-receive-pack [OR,NC]
+    RewriteCond %{REQUEST_URI} ^/.*/git-receive-pack$ [NC]
+    RewriteRule .* - [E=AUTHREQUIRED:yes]
+
+    <Location />
+      Order Allow,Deny
+      Deny from env=AUTHREQUIRED
+      Allow from all
+<% if vhost_part == :ssl -%>
+      Satisfy Any
+
+      AuthType Basic
+      AuthName "Git Access"
+      # Password file created with htpasswd
+      AuthUserFile /var/www/htpasswds/<%= name %>
+      Require valid-user
+<% end -%>
+      <LimitExcept POST GET>
+        Deny from all
+      </LimitExcept>
+    </Location>
+<% if vhost_part == :ssl -%>
+    <Location /_gl>
+      AuthType Basic
+      AuthName "Git Access"
+      # Password file created with htpasswd
+      AuthUserFile /var/www/htpasswds/<%= name %>
+      Require valid-user
+      Satisfy All
+
+      <LimitExcept POST GET>
+        Deny from all
+      </LimitExcept>
+    </Location>
+<% end -%>
+    <IfModule mod_expires.c>
+      ExpiresActive On
+      ExpiresByType image/png "access plus 6 month"
+      ExpiresByType image/ico "access plus 6 month"
+      ExpiresByType text/css "access plus 6 month"
+    </IfModule>
+
