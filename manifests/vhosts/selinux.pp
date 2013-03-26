@@ -9,4 +9,9 @@ class cgit::vhosts::selinux {
       require   => Package['cgit'],
       before    => Service['apache'],
   }
+  selboolean{
+    'git_cgit_read_gitosis_content':
+      value       => 'on',
+      persistent  => true;
+  }
 }
