@@ -4,7 +4,7 @@ define cgit::instance(
   $ssl_mode     = false,
   $user         = 'absent',
   $group        = 'absent',
-  $cgit_options = {},
+  $cgit_options = {}
 ) {
 
   if ($ensure == 'present') and (($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {
