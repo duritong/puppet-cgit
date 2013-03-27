@@ -11,7 +11,7 @@
                          [0-9a-f]{2}/[0-9a-f]{38} | \
                          pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
                        git-(upload|receive)-pack))$" \
-                       /var/www/git_suexec/scritch/gitolite-suexec-wrapper.sh/$1
+                       /var/www/git_suexec/<%= name %>/gitolite-suexec-wrapper.sh/$1
 <% end -%>
 
     ScriptAliasMatch "(?x)^/(.*/(HEAD | \
