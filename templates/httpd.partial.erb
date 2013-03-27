@@ -1,8 +1,8 @@
-    SetEnv GIT_PROJECT_ROOT <%= repos_dir %>
+    SetEnv GIT_PROJECT_ROOT <%= template_vars['repos_path'] %>
 
     Alias /cgit-data /usr/share/cgit
 
-    SuexecUserGroup <%= user %> <%= group %>
+    SuexecUserGroup <%= template_vars['user'] %> <%= template_vars['group'] %>
 
 <% if vhost_part == :ssl -%>
     ScriptAliasMatch "(?x)^/_gl/(.*/(HEAD | \
