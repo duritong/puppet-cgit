@@ -64,7 +64,7 @@ define cgit::instance(
 
     Apache::Vhost::Template[$name]{
       template_partial  => 'cgit/httpd.partial.erb',
-      mode_security     => false,
+      mod_security      => false,
       logprefix         => "${name}-",
       path              => 'really_absent',
       path_is_webdir    => true,
