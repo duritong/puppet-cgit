@@ -54,11 +54,12 @@ define cgit::instance(
         owner   => $user,
         group   => $group,
         mode    => '0750';
-      "/var/www/htpasswds/${name}":
-        ensure  => present,
-        owner   => $user,
-        group   => $group,
-        mode    => '0640';
+    }
+    File["/var/www/htpasswds/${name}"]{
+      ensure  => present,
+      owner   => $user,
+      group   => $group,
+      mode    => '0640',
     }
 
     Apache::Vhost::Template[$name]{
