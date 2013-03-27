@@ -71,6 +71,7 @@ define cgit::instance(
       },
       mod_security      => false,
       logprefix         => "${name}-",
+      logpath           => '/var/log/httpd',
       path              => 'really_absent',
       path_is_webdir    => true,
       ssl_mode          => $ssl_mode,
