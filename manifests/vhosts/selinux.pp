@@ -6,6 +6,7 @@ class cgit::vhosts::selinux {
     'cgit_gitolite':
       te_source => 'puppet:///modules/cgit/selinux/gitolite/cgit_gitolite.te',
       fc_source => 'puppet:///modules/cgit/selinux/gitolite/cgit_gitolite.fc',
+      fc_file   => true,
       require   => Package['cgit'],
       before    => Service['apache'],
   }
