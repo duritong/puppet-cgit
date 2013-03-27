@@ -34,7 +34,12 @@ define cgit::instance(
       require => Package['cgit'],
       owner   => $user,
       group   => $group,
+    }
+    File["/var/cache/cgit/${name}"]{
       mode    => '0640',
+    }
+    File["/var/www/git_suexec/${name}"]{
+      mode    => '0644',
     }
 
     file{
