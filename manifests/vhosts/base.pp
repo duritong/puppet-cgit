@@ -1,9 +1,9 @@
 class cgit::vhosts::base inherits cgit::base {
   File['/etc/cgitrc']{
     source  => [
-      "puppet://modules/site_cgit/config/${::fqdn}/cgitrc",
-      'puppet://modules/site_cgit/config/cgitrc',
-      'puppet://modules/cgit/config/cgitrc.vhosts',
+      "puppet:///modules/site_cgit/config/${::fqdn}/cgitrc",
+      'puppet:///modules/site_cgit/config/cgitrc',
+      'puppet:///modules/cgit/config/cgitrc.vhosts',
     ],
   }
 
