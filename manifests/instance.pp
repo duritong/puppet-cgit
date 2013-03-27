@@ -43,17 +43,17 @@ define cgit::instance(
         require => Package['apache'],
         owner   => root,
         group   => $group,
-        mode    => 0640;
+        mode    => 0644;
       "/var/www/git_suexec/${name}/cgit-suexec-wrapper.sh":
         content => "#!/bin/bash\n# Wrapper for cgit\nexec /var/www/cgi-bin/cgit\n",
         owner   => $user,
         group   => $group,
-        mode    => '0750';
+        mode    => '0755';
       "/var/www/git_suexec/${name}/gitolite-suexec-wrapper.sh":
         content => template('cgit/gitolite-suexec-wrapper.sh.erb'),
         owner   => $user,
         group   => $group,
-        mode    => '0750';
+        mode    => '0755';
     }
     File["/var/www/htpasswds/${name}"]{
       ensure  => present,
