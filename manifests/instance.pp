@@ -1,5 +1,6 @@
 define cgit::instance(
   $ensure         = 'present',
+  $domainalias    = 'absent',
   $base_dir       = 'absent',
   $ssl_mode       = false,
   $user           = 'absent',
@@ -74,6 +75,7 @@ define cgit::instance(
     }
 
     Apache::Vhost::Template[$name]{
+      domainalias       => $domainalias,
       template_partial  => 'cgit/httpd.partial.erb',
       template_vars     => {
         repos_path    => $repos_path,
