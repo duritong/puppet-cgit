@@ -1,10 +1,11 @@
 define cgit::instance(
-  $ensure       = 'present',
-  $base_dir     = 'absent',
-  $ssl_mode     = false,
-  $user         = 'absent',
-  $group        = 'absent',
-  $cgit_options = {}
+  $ensure         = 'present',
+  $base_dir       = 'absent',
+  $ssl_mode       = false,
+  $user           = 'absent',
+  $group          = 'absent',
+  $anonymous_http = true,
+  $cgit_options   = {}
 ) {
 
   if ($ensure == 'present') and (($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {

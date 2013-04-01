@@ -4,7 +4,7 @@
 
     SuexecUserGroup <%= template_vars['user'] %> <%= template_vars['group'] %>
 
-<% if vhost_part == :ssl -%>
+<% if (vhost_part == :ssl) && anonymous_http -%>
     ScriptAliasMatch "(?x)^/_gl/(.*/(HEAD | \
                        info/refs | \
                        objects/(info/[^/]+ | \
@@ -24,18 +24,24 @@
 
     ScriptAlias / /var/www/git_suexec/<%= name %>/cgit-suexec-wrapper.sh/
 
+<% if anonymous_http -%>
     RewriteEngine On
     # Detect git push -> do not allow anonymous push
     RewriteCond %{QUERY_STRING} service=git-receive-pack [OR,NC]
     RewriteCond %{REQUEST_URI} ^/.*/git-receive-pack$ [NC]
     RewriteRule .* - [E=AUTHREQUIRED:yes]
+<% end -%>
 
     <Location />
+<% if anonymous_http -%>
       Order Allow,Deny
       Deny from env=AUTHREQUIRED
       Allow from all
+<% end -%>
 <% if vhost_part == :ssl -%>
+<% if anonymous_http -%>
       Satisfy Any
+<% end -%>
 
       AuthType Basic
       AuthName "Git Access"
@@ -47,7 +53,7 @@
         Deny from all
       </LimitExcept>
     </Location>
-<% if vhost_part == :ssl -%>
+<% if (vhost_part == :ssl) && anonymous_http -%>
     <Location /_gl>
       AuthType Basic
       AuthName "Git Access"
