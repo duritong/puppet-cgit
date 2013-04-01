@@ -19,7 +19,8 @@ class cgit::vhosts::base inherits cgit::base {
       owner   => root,
       group   => 0,
       mode    => '0644';
-    '/var/www/git_suexec':
+    [ '/var/www/git_suexec',
+      '/var/www/git_htpasswds', ]:
       ensure        => 'directory',
       require       => Package['apache'],
       purge         => true,

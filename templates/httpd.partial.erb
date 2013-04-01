@@ -40,7 +40,7 @@
       AuthType Basic
       AuthName "Git Access"
       # Password file created with htpasswd
-      AuthUserFile /var/www/htpasswds/<%= name %>
+      AuthUserFile <%= template_vars['htpasswd_file'] %>
       Require valid-user
 <% end -%>
       <LimitExcept POST GET>
@@ -52,7 +52,7 @@
       AuthType Basic
       AuthName "Git Access"
       # Password file created with htpasswd
-      AuthUserFile /var/www/htpasswds/<%= name %>
+      AuthUserFile <%= template_vars['htpasswd_file'] %>
       Require valid-user
       Satisfy All
 

@@ -11,8 +11,8 @@ define cgit::instance(
     fail("You need to set \$base_dir, \$user and \$group for ${name} if present")
   }
 
-  $htpasswd_file = "/var/www/htpasswds/${name}"
-  file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/htpasswds/${name}" ]: }
+  $htpasswd_file = "/var/www/git_htpasswds/${name}/htpasswd"
+  file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/git_htpasswds/${name}" ]: }
     
   apache::vhost::template{
     $name:
@@ -29,7 +29,7 @@ define cgit::instance(
     $projects_list = "${base_dir}/projects.list"
 
     include cgit::vhosts
-    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}"]{
+    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}" ]{
       ensure  => directory,
       require => Package['cgit'],
       owner   => $user,
@@ -41,6 +41,12 @@ define cgit::instance(
     File["/var/www/git_suexec/${name}"]{
       mode    => '0644',
     }
+    File["/var/www/git_htpasswds/${name}"]{
+      ensure  => directory,
+      owner   => $user,
+      group   => 'apache',
+      mode    => '0640',
+    }
 
     file{
       "/etc/cgitrc.d/${name}":
@@ -49,6 +55,11 @@ define cgit::instance(
         owner   => root,
         group   => $group,
         mode    => 0644;
+      $htpasswd_file:
+        ensure  => file,
+        owner   => $user,
+        group   => 'apache',
+        mode    => '0640';
       "/var/www/git_suexec/${name}/cgit-suexec-wrapper.sh":
         content => "#!/bin/bash\n# Wrapper for cgit\nexec /var/www/cgi-bin/cgit\n",
         owner   => $user,
@@ -60,19 +71,14 @@ define cgit::instance(
         group   => $group,
         mode    => '0755';
     }
-    File["/var/www/htpasswds/${name}"]{
-      ensure  => present,
-      owner   => $user,
-      group   => $group,
-      mode    => '0640',
-    }
 
     Apache::Vhost::Template[$name]{
       template_partial  => 'cgit/httpd.partial.erb',
       template_vars     => {
-        repos_path  => $repos_path,
-        user        => $user,
-        group       => $group,
+        repos_path    => $repos_path,
+        htpasswd_file => $htpasswd_file,
+        user          => $user,
+        group         => $group,
       },
       mod_security      => false,
       logprefix         => "${name}-",
@@ -83,7 +89,7 @@ define cgit::instance(
     }
 
   } else {
-    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/htpasswds/${name}"]{
+    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/git_htpasswds/${name}"]{
       ensure  => absent,
       purge   => true,
       force   => true,
