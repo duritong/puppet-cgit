@@ -63,7 +63,7 @@ define cgit::instance(
         group   => 'apache',
         mode    => '0640';
       "/var/www/git_suexec/${name}/cgit-suexec-wrapper.sh":
-        content => "#!/bin/bash\n# Wrapper for cgit\nexec /var/www/cgi-bin/cgit\n",
+        content => "#!/bin/bash\n# Wrapper for cgit\nexport VHOST=${name}\nexec /var/www/cgi-bin/cgit\n",
         owner   => $user,
         group   => $group,
         mode    => '0755';
