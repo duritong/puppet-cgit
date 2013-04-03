@@ -29,7 +29,7 @@
     # Detect git push -> do not allow anonymous push
     RewriteCond %{QUERY_STRING} service=git-receive-pack [OR,NC]
 <% if (vhost_part == :ssl) && template_vars['anonymous_http'] -%>
-   RewriteCond %{REQUEST_URI} ^/_gl/.* [OR,NC]
+    RewriteCond %{REQUEST_URI} ^/_gl/.* [OR,NC]
 <% end -%>
     RewriteCond %{REQUEST_URI} ^/.*/git-receive-pack$ [NC]
     RewriteRule .* - [E=AUTHREQUIRED:yes]
