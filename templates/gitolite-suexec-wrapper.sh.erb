@@ -5,13 +5,19 @@
 #
 
 USER=$1
-if [ ! -z $USER ]; then
-  # if we are authenticated we export all repos
-  export GIT_HTTP_EXPORT_ALL=true
+if [ -z "$REMOTE_USER" ]; then
+  export REMOTE_USER=$REDIRECT_REMOTE_USER
+else
+  export REMOTE_USER
 fi
-
 
 export GIT_PROJECT_ROOT='<%= repos_path %>'
 export GITOLITE_HTTP_HOME='<%= base_dir %>'
 
+if [ ! -z "$USER" ] || [ ! -z "$REMOTE_USER" ]; then
+  # if we are authenticated we export all repos
+  export GIT_HTTP_EXPORT_ALL=true
+fi
+
 exec /usr/share/gitolite3/gitolite-shell $USER
+
