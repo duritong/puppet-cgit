@@ -1,12 +1,15 @@
 define cgit::instance(
-  $ensure         = 'present',
-  $domainalias    = 'absent',
-  $base_dir       = 'absent',
-  $ssl_mode       = false,
-  $user           = 'absent',
-  $group          = 'absent',
-  $anonymous_http = true,
-  $cgit_options   = {}
+  $ensure           = 'present',
+  $domainalias      = 'absent',
+  $base_dir         = 'absent',
+  $ssl_mode         = false,
+  $user             = 'absent',
+  $group            = 'absent',
+  $anonymous_http   = true,
+  $cgit_options     = {},
+  $nagios_check     = false,
+  $nagios_web_check = 'OK',
+  $nagios_web_use   = 'generic-service',
 ) {
 
   if ($ensure == 'present') and (($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {
@@ -101,4 +104,17 @@ define cgit::instance(
     }
   }
   
+  if $nagios_check {
+    $nagios_check_code = $anonymous_http ? { 
+      true      => $nagios_web_check,
+      default   => '401'
+    }  
+    nagios::service::http{"gitweb_${name}":
+      ensure        => $ensure,
+      check_domain  => $name,
+      ssl_mode      => $ssl_mode,
+      check_code    => $nagios_check_code,
+      use           => $nagios_web_use,
+    }
+  }
 }
