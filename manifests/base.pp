@@ -22,8 +22,8 @@ class cgit::base {
       recurse       => true,
       force         => true,
       recurselimit  => 1,
-      owner         => root,
-      group         => 0,
+      owner         => apache,
+      group         => apache,
       mode          => '0644';
   }
 }
