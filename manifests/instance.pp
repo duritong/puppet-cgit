@@ -1,3 +1,4 @@
+# create an instance for cgit and gitolite
 define cgit::instance(
   $ensure           = 'present',
   $domainalias      = 'absent',
@@ -18,10 +19,10 @@ define cgit::instance(
 
   $htpasswd_file = "/var/www/git_htpasswds/${name}/htpasswd"
   file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/git_htpasswds/${name}" ]: }
-    
+
   apache::vhost::template{
     $name:
-      ensure => $ensure;  
+      ensure => $ensure;
   }
   if $ensure == 'present' {
 
@@ -59,7 +60,7 @@ define cgit::instance(
         require => Package['apache'],
         owner   => root,
         group   => $group,
-        mode    => 0644;
+        mode    => '0644';
       $htpasswd_file:
         ensure  => file,
         owner   => $user,
@@ -103,18 +104,27 @@ define cgit::instance(
       recurse => true,
     }
   }
-  
+
   if $nagios_check {
-    $nagios_check_code = $anonymous_http ? { 
+    $nagios_check_code = $anonymous_http ? {
       true      => $nagios_web_check,
       default   => '401'
-    }  
+    }
     nagios::service::http{"gitweb_${name}":
       ensure        => $ensure,
       check_domain  => $name,
       ssl_mode      => $ssl_mode,
       check_code    => $nagios_check_code,
       use           => $nagios_web_use,
+    }
+  }
+
+  if $::selinux == 'true' {
+    # unfortunately current (EL6) selinux capabilities do not allow
+    # us to do that without restorecond
+    selinux::restorecond::entry{
+      $projects_list:
+        ensure => $ensure;
     }
   }
 }
