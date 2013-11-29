@@ -1,4 +1,4 @@
-module cgit_gitolite 1.1;
+module cgit_gitolite 1.2;
 
 require {
         type httpd_git_rw_content_t;
@@ -6,10 +6,43 @@ require {
         type tmp_t;
         type exim_spool_t;
         type ssh_home_t;
-        class dir { read write remove_name getattr search open rename setattr add_name };
-        class file { read create getattr execute_no_trans write ioctl unlink open execute rename setattr };
         type git_system_t;
-        class dir search;
+        class dir { read write remove_name getattr search open rename setattr add_name ioctl lock create link unlink reparent rmdir };
+        class file { read create getattr execute_no_trans write ioctl unlink open execute rename setattr lock entrypoint append link };
+        class lnk_file { create getattr setattr read write append rename link unlink ioctl lock };
+        class fd { use };
+        class filesystem { getattr };
+        class process { signull sigchld transition noatsecure siginh rlimitinh signal sigkill sigstop setsched getattr setfscreate };
+        class fifo_file { create open getattr setattr read write append rename link unlink ioctl lock };
+        class socket { read write };
+        class tcp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown accept recvfrom listen name_connect send_msg recv_msg name_bind node_bind };
+        class udp_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown recvfrom name_bind send_msg recv_msg node_bind };
+        class rawip_socket { read write recvfrom };
+        class netlink_socket { read write };
+        class packet_socket { read write };
+        class unix_stream_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown connectto listen accept };
+        class unix_dgram_socket { create ioctl read getattr lock write setattr append bind connect getopt setopt shutdown };
+        class appletalk_socket { read write };
+        class netlink_route_socket { { create { ioctl read getattr lock write setattr append bind connect getopt setopt shutdown } } nlmsg_read };
+        class netlink_firewall_socket { read write };
+        class netlink_tcpdiag_socket { read write };
+        class netlink_nflog_socket { read write };
+        class netlink_xfrm_socket { read write };
+        class netlink_audit_socket { read write };
+        class netlink_selinux_socket { read write };
+        class netlink_ip6fw_socket { read write };
+        class netlink_dnrt_socket { read write };
+        class netlink_kobject_uevent_socket { read write };
+        class tun_socket { read write };
+        class sock_file { create open getattr setattr read write rename link unlink ioctl lock append };
+        class chr_file { getattr open read lock ioctl };
+        class capability { sys_chroot net_bind_service };
+        class peer { recv };
+        class association { sendto recvfrom };
+        class packet { send recv };
+        class netif { tcp_send tcp_recv egress ingress udp_send udp_recv };
+        class node { tcp_send tcp_recv sendto recvfrom udp_send udp_recv };
+        class security check_context;
 }
 
 #============= httpd_git_script_t ==============
@@ -26,4 +59,10 @@ allow httpd_git_script_t tmp_t:file { write read getattr unlink open };
 allow git_system_t httpd_git_rw_content_t:dir { read search open getattr };
 allow git_system_t httpd_git_rw_content_t:file { read getattr open };
 
+list_dirs_pattern(httpd_git_script_t, httpd_git_rw_content_t, httpd_git_rw_content_t)
+read_files_pattern(httpd_git_script_t, httpd_git_rw_content_t, httpd_git_rw_content_t)
+userdom_search_user_home_dirs(httpd_git_script_t)
+files_search_var_lib(httpd_git_script_t)
 
+files_dontaudit_getattr_tmp_dirs(httpd_git_script_t)
+auth_use_nsswitch(httpd_git_script_t)
