@@ -11,8 +11,8 @@ else
   export REMOTE_USER
 fi
 
-export GIT_PROJECT_ROOT='<%= repos_path %>'
-export GITOLITE_HTTP_HOME='<%= base_dir %>'
+export GIT_PROJECT_ROOT='<%= @repos_path %>'
+export GITOLITE_HTTP_HOME='<%= @base_dir %>'
 
 if [ ! -z "$USER" ] || [ ! -z "$REMOTE_USER" ]; then
   # if we are authenticated we export all repos

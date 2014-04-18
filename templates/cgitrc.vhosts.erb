@@ -1,6 +1,6 @@
-project-list=<%= projects_list %>
-scan-path=<%= repos_path %>
-clone-prefix=<%= ['git','http'].collect{|p| "#{p}://#{name}" }.join(' ') %>
-<% (o=default_cgit_options.merge(cgit_options)).keys.sort.each do |k| -%>
+project-list=<%= @projects_list %>
+scan-path=<%= @repos_path %>
+clone-prefix=<%= ['git','http'].collect{|p| "#{p}://#{@name}" }.join(' ') %>
+<% (o=@default_cgit_options.merge(@cgit_options)).keys.sort.each do |k| -%>
 <%= k %>=<%= o[k] %>
 <% end -%>
