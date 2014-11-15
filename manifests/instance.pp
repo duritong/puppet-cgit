@@ -1,6 +1,7 @@
 # create an instance for cgit and gitolite
 define cgit::instance(
   $ensure           = 'present',
+  $configuration    = {},
   $domainalias      = 'absent',
   $base_dir         = 'absent',
   $ssl_mode         = false,
@@ -80,6 +81,7 @@ define cgit::instance(
 
     Apache::Vhost::Template[$name]{
       domainalias       => $domainalias,
+      configuration     => $configuration,
       template_partial  => 'cgit/httpd.partial.erb',
       template_vars     => {
         repos_path      => $repos_path,
