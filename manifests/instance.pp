@@ -14,12 +14,14 @@ define cgit::instance(
   $nagios_web_use   = 'generic-service'
 ) {
 
-  if ($ensure == 'present') and (($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {
-    fail("You need to set \$base_dir, \$user and \$group for ${name} if present")
+  if ($ensure == 'present') and (
+    ($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {
+    fail("\$base_dir, \$user and \$group are required for  ${name}")
   }
 
   $htpasswd_file = "/var/www/git_htpasswds/${name}/htpasswd"
-  file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/git_htpasswds/${name}" ]: }
+  file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
+    "/var/www/git_htpasswds/${name}" ]: }
 
   apache::vhost::template{
     $name:
@@ -35,7 +37,7 @@ define cgit::instance(
     $repos_path = "${base_dir}/repositories"
     $projects_list = "${base_dir}/projects.list"
 
-    include cgit::vhosts
+    include ::cgit::vhosts
     File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}" ]{
       ensure  => directory,
       require => Package['cgit'],
@@ -68,7 +70,11 @@ define cgit::instance(
         group   => 'apache',
         mode    => '0640';
       "/var/www/git_suexec/${name}/cgit-suexec-wrapper.sh":
-        content => "#!/bin/bash\n# Wrapper for cgit\nexport VHOST=${name}\nexec /var/www/cgi-bin/cgit\n",
+        content => "#!/bin/bash
+# Wrapper for cgit
+export VHOST=${name}
+exec /var/www/cgi-bin/cgit
+",
         owner   => $user,
         group   => $group,
         mode    => '0755';
@@ -99,7 +105,8 @@ define cgit::instance(
     }
 
   } else {
-    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}","/var/www/git_htpasswds/${name}"]{
+    File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
+      "/var/www/git_htpasswds/${name}"]{
       ensure  => absent,
       purge   => true,
       force   => true,
@@ -113,15 +120,15 @@ define cgit::instance(
       default   => '401'
     }
     nagios::service::http{"gitweb_${name}":
-      ensure        => $ensure,
-      check_domain  => $name,
-      ssl_mode      => $ssl_mode,
-      check_code    => $nagios_check_code,
-      use           => $nagios_web_use,
+      ensure       => $ensure,
+      check_domain => $name,
+      ssl_mode     => $ssl_mode,
+      check_code   => $nagios_check_code,
+      use          => $nagios_web_use,
     }
   }
 
-  if $::selinux == 'true' {
+  if str2bool($::selinux) {
     # unfortunately current (EL6) selinux capabilities do not allow
     # us to do that without restorecond
     selinux::restorecond::entry{
