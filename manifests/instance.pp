@@ -9,6 +9,7 @@ define cgit::instance(
   $group            = 'absent',
   $anonymous_http   = true,
   $cgit_options     = {},
+  $clone_prefixes   = undef,
   $nagios_check     = false,
   $nagios_web_check = 'OK',
   $nagios_web_use   = 'generic-service'

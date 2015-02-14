@@ -1,6 +1,17 @@
 project-list=<%= @projects_list %>
 scan-path=<%= @repos_path %>
-clone-prefix=<%= ['git','http'].collect{|p| "#{p}://#{@name}" }.join(' ') %>
+clone-prefix=<%= Array(if @clone_prefixes
+  @clone_prefixes
+else
+  cp = []
+  if @ssl_mode
+    cp << "https://#{@name}"
+  end
+  if @ssl_mode != 'force'
+    cp << "http://#{@name}"
+  end
+  cp << "git://#{@name}"
+end).join(' ') %>
 <% (o=@default_cgit_options.merge(@cgit_options)).keys.sort.each do |k| -%>
 <%= k %>=<%= o[k] %>
 <% end -%>
