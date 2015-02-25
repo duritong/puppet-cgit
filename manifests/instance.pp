@@ -22,7 +22,7 @@ define cgit::instance(
 
   $htpasswd_file = "/var/www/git_htpasswds/${name}/htpasswd"
   file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
-    "/var/www/git_htpasswds/${name}" ]: }
+    "/var/www/git_htpasswds/${name}","/etc/cgitrc.d/${name}" ]: }
 
   apache::vhost::template{
     $name:
@@ -57,14 +57,15 @@ define cgit::instance(
       group   => 'apache',
       mode    => '0640',
     }
+    File["/etc/cgitrc.d/${name}"]{
+      content => template('cgit/cgitrc.vhosts.erb'),
+      require => Package['apache'],
+      owner   => root,
+      group   => $group,
+      mode    => '0644'
+    }
 
     file{
-      "/etc/cgitrc.d/${name}":
-        content => template('cgit/cgitrc.vhosts.erb'),
-        require => Package['apache'],
-        owner   => root,
-        group   => $group,
-        mode    => '0644';
       $htpasswd_file:
         ensure  => file,
         owner   => $user,
@@ -107,7 +108,7 @@ exec /var/www/cgi-bin/cgit
 
   } else {
     File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
-      "/var/www/git_htpasswds/${name}"]{
+      "/var/www/git_htpasswds/${name}","/etc/cgitrc.d/${name}"]{
       ensure  => absent,
       purge   => true,
       force   => true,
