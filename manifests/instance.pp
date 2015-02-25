@@ -50,6 +50,7 @@ define cgit::instance(
     }
     File["/var/www/git_suexec/${name}"]{
       mode    => '0644',
+      seltype => 'httpd_sys_content_t',
     }
     File["/var/www/git_htpasswds/${name}"]{
       ensure  => directory,
