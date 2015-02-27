@@ -24,10 +24,6 @@ define cgit::instance(
   file{["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
     "/var/www/git_htpasswds/${name}","/etc/cgitrc.d/${name}" ]: }
 
-  apache::vhost::template{
-    $name:
-      ensure => $ensure;
-  }
   $projects_list = "${base_dir}/projects.list"
   if $ensure == 'present' {
 
@@ -88,7 +84,8 @@ exec /var/www/cgi-bin/cgit
         mode    => '0755';
     }
 
-    Apache::Vhost::Template[$name]{
+    apache::vhost::template{$name:
+      ensure            => $ensure,
       domainalias       => $domainalias,
       configuration     => $configuration,
       template_partial  => 'cgit/httpd.partial.erb',
