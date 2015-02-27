@@ -28,6 +28,7 @@ define cgit::instance(
     $name:
       ensure => $ensure;
   }
+  $projects_list = "${base_dir}/projects.list"
   if $ensure == 'present' {
 
     $default_cgit_options = {
@@ -36,7 +37,6 @@ define cgit::instance(
     }
 
     $repos_path = "${base_dir}/repositories"
-    $projects_list = "${base_dir}/projects.list"
 
     include ::cgit::vhosts
     File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}" ]{
