@@ -85,28 +85,28 @@ exec /var/www/cgi-bin/cgit
     }
 
     apache::vhost::template{$name:
-      ensure            => $ensure,
-      domainalias       => $domainalias,
-      configuration     => $configuration,
-      template_partial  => 'cgit/httpd.partial.erb',
-      template_vars     => {
-        repos_path      => $repos_path,
-        htpasswd_file   => $htpasswd_file,
-        anonymous_http  => $anonymous_http,
-        user            => $user,
-        group           => $group,
+      ensure           => $ensure,
+      domainalias      => $domainalias,
+      configuration    => $configuration,
+      template_partial => 'cgit/httpd.partial.erb',
+      template_vars    => {
+        repos_path     => $repos_path,
+        htpasswd_file  => $htpasswd_file,
+        anonymous_http => $anonymous_http,
+        user           => $user,
+        group          => $group,
       },
-      mod_security      => false,
-      logprefix         => "${name}-",
-      logpath           => '/var/log/httpd',
-      path              => 'really_absent',
-      path_is_webdir    => true,
-      ssl_mode          => $ssl_mode,
+      mod_security     => false,
+      logprefix        => "${name}-",
+      logpath          => '/var/log/httpd',
+      path             => 'really_absent',
+      path_is_webdir   => true,
+      ssl_mode         => $ssl_mode,
     }
 
   } else {
     File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}",
-      "/var/www/git_htpasswds/${name}","/etc/cgitrc.d/${name}"]{
+        "/var/www/git_htpasswds/${name}","/etc/cgitrc.d/${name}"]{
       ensure  => absent,
       purge   => true,
       force   => true,
