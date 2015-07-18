@@ -13,6 +13,7 @@ fi
 
 export GIT_PROJECT_ROOT='<%= @repos_path %>'
 export GITOLITE_HTTP_HOME='<%= @base_dir %>'
+export TMPDIR='<%= @base_dir %>/git_tmp'
 
 if [ ! -z "$USER" ] || [ ! -z "$REMOTE_USER" ]; then
   # if we are authenticated we export all repos

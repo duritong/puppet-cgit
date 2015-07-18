@@ -72,6 +72,7 @@ define cgit::instance(
         content => "#!/bin/bash
 # Wrapper for cgit
 export VHOST=${name}
+export TMPDIR='${base_dir}/git_tmp'
 exec /var/www/cgi-bin/cgit
 ",
         owner   => $user,
