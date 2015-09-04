@@ -1,3 +1,4 @@
+# everything needed for a vhost based setup
 class cgit::vhosts::base inherits cgit::base {
   File['/etc/cgitrc']{
     source  => [
@@ -31,10 +32,10 @@ class cgit::vhosts::base inherits cgit::base {
       mode          => '0644';
   }
 
-  if $::selinux == 'true' {
+  if str2bool($::selinux) {
     File['/var/www/git_suexec']{
       seltype => 'httpd_git_script_exec_t'
     }
-    include cgit::vhosts::selinux
+    include ::cgit::vhosts::selinux
   }
 }
