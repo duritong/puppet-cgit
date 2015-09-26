@@ -1,17 +1,17 @@
-    SetEnv GIT_PROJECT_ROOT <%= template_vars['repos_path'] %>
+    SetEnv GIT_PROJECT_ROOT <%= @template_vars['repos_path'] %>
 
     Alias /cgit-data /usr/share/cgit
 
-    SuexecUserGroup <%= template_vars['user'] %> <%= template_vars['group'] %>
+    SuexecUserGroup <%= @template_vars['user'] %> <%= @template_vars['group'] %>
 
-<% if (vhost_part == :ssl) && template_vars['anonymous_http'] -%>
+<% if (vhost_part == :ssl) && @template_vars['anonymous_http'] -%>
     ScriptAliasMatch "(?x)^/_gl/(.*/(HEAD | \
                        info/refs | \
                        objects/(info/[^/]+ | \
                          [0-9a-f]{2}/[0-9a-f]{38} | \
                          pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
                        git-(upload|receive)-pack))$" \
-                       /var/www/git_suexec/<%= name %>/gitolite-suexec-wrapper.sh/$1
+                       /var/www/git_suexec/<%= @name %>/gitolite-suexec-wrapper.sh/$1
 <% end -%>
 
     ScriptAliasMatch "(?x)^/(.*/(HEAD | \
@@ -20,15 +20,15 @@
                          [0-9a-f]{2}/[0-9a-f]{38} | \
                          pack/pack-[0-9a-f]{40}\.(pack|idx)) | \
                        git-(upload|receive)-pack))$" \
-                       /var/www/git_suexec/<%= name %>/gitolite-suexec-wrapper.sh/$1
+                       /var/www/git_suexec/<%= @name %>/gitolite-suexec-wrapper.sh/$1
 
-    ScriptAlias / /var/www/git_suexec/<%= name %>/cgit-suexec-wrapper.sh/
+    ScriptAlias / /var/www/git_suexec/<%= @name %>/cgit-suexec-wrapper.sh/
 
-<% if template_vars['anonymous_http'] -%>
+<% if @template_vars['anonymous_http'] -%>
     RewriteEngine On
     # Detect git push -> do not allow anonymous push
     RewriteCond %{QUERY_STRING} service=git-receive-pack [OR,NC]
-<% if (vhost_part == :ssl) && template_vars['anonymous_http'] -%>
+<% if (vhost_part == :ssl) && @template_vars['anonymous_http'] -%>
     RewriteCond %{REQUEST_URI} ^/_gl/.* [OR,NC]
 <% end -%>
     RewriteCond %{REQUEST_URI} ^/.*/git-receive-pack$ [NC]
@@ -36,20 +36,20 @@
 <% end -%>
 
     <Location />
-<% if template_vars['anonymous_http'] -%>
+<% if @template_vars['anonymous_http'] -%>
       Order Allow,Deny
       Deny from env=AUTHREQUIRED
       Allow from all
 <% end -%>
 <% if vhost_part == :ssl -%>
-<% if template_vars['anonymous_http'] -%>
+<% if @template_vars['anonymous_http'] -%>
       Satisfy Any
 <% end -%>
 
       AuthType Basic
       AuthName "Git Access"
       # Password file created with htpasswd
-      AuthUserFile <%= template_vars['htpasswd_file'] %>
+      AuthUserFile <%= @template_vars['htpasswd_file'] %>
       Require valid-user
 <% end -%>
       <LimitExcept POST GET>
