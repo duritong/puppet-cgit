@@ -1,5 +1,6 @@
 # create an instance for cgit and gitolite
 define cgit::instance(
+  $base_dir,
   $ensure           = 'present',
   $configuration    = {},
   $domainalias      = 'absent',
@@ -12,7 +13,6 @@ define cgit::instance(
   $nagios_check     = false,
   $nagios_web_check = 'OK',
   $nagios_web_use   = 'generic-service',
-  $base_dir,
 ) {
 
   if ($ensure == 'present') and (($user == 'absent') or ($group == 'absent')) {
@@ -48,10 +48,10 @@ define cgit::instance(
       seltype => 'httpd_sys_content_t',
     }
     File["/var/www/git_htpasswds/${name}"]{
-      ensure  => directory,
-      owner   => $user,
-      group   => 'apache',
-      mode    => '0640',
+      ensure => directory,
+      owner  => $user,
+      group  => 'apache',
+      mode   => '0640',
     }
     File["/etc/cgitrc.d/${name}"]{
       content => template('cgit/cgitrc.vhosts.erb'),
@@ -63,10 +63,10 @@ define cgit::instance(
 
     file{
       $htpasswd_file:
-        ensure  => file,
-        owner   => $user,
-        group   => 'apache',
-        mode    => '0640';
+        ensure => file,
+        owner  => $user,
+        group  => 'apache',
+        mode   => '0640';
       "/var/www/git_suexec/${name}/cgit-suexec-wrapper.sh":
         content => "#!/bin/bash
 # Wrapper for cgit
