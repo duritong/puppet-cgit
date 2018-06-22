@@ -3,7 +3,6 @@ define cgit::instance(
   $ensure           = 'present',
   $configuration    = {},
   $domainalias      = 'absent',
-  $base_dir         = 'absent',
   $ssl_mode         = false,
   $user             = 'absent',
   $group            = 'absent',
@@ -12,12 +11,12 @@ define cgit::instance(
   $clone_prefixes   = undef,
   $nagios_check     = false,
   $nagios_web_check = 'OK',
-  $nagios_web_use   = 'generic-service'
+  $nagios_web_use   = 'generic-service',
+  $base_dir,
 ) {
 
-  if ($ensure == 'present') and (
-    ($base_dir == 'absent') or ($user == 'absent') or ($group == 'absent')) {
-    fail("\$base_dir, \$user and \$group are required for  ${name}")
+  if ($ensure == 'present') and (($user == 'absent') or ($group == 'absent')) {
+    fail("\$user and \$group are required for  ${name}")
   }
 
   $htpasswd_file = "/var/www/git_htpasswds/${name}/htpasswd"
