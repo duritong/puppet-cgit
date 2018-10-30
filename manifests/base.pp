@@ -29,10 +29,4 @@ class cgit::base {
       group        => apache,
       mode         => '0644';
   }
-  if versioncmp($facts['os']['release']['major'],'7') >= 0 {
-    apache::config::global{
-      'cgit.conf':
-        source => 'puppet:///modules/cgit/config/httpd',
-    }
-  }
 }

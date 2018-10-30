@@ -9,9 +9,6 @@ class cgit::vhosts::base inherits cgit::base {
   }
 
   file{
-    '/etc/httpd/conf.d/cgit.conf':
-      ensure  => absent,
-      require => Package['cgit'];
     '/etc/cgitrc.d':
       ensure  => directory,
       recurse => true,
@@ -31,6 +28,16 @@ class cgit::vhosts::base inherits cgit::base {
       group   => 0,
       mode    => '0644',
       seltype => 'httpd_sys_content_t';
+  }
+  apache::config::global{'cgit.conf': }
+  if versioncmp($facts['os']['release']['major'],'7') >= 0 {
+    Apache::Config::Global['cgit.conf']{
+      source => 'puppet:///modules/cgit/config/httpd',
+    }
+  } else {
+    Apache::Config::Global['cgit.conf']{
+      ensure  => absent,
+    }
   }
 
   if str2bool($::selinux) {
