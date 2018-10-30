@@ -33,6 +33,13 @@ define cgit::instance(
 
     $repos_path = "${base_dir}/repositories"
 
+    if versioncmp($facts['os']['release']['major'],'7') >= 0 {
+      $setype = 'git_script_exec_t'
+    } else {
+      $setype = 'httpd_git_script_exec_t'
+    }
+
+
     include ::cgit::vhosts
     File["/var/cache/cgit/${name}","/var/www/git_suexec/${name}" ]{
       ensure  => directory,
@@ -76,12 +83,14 @@ exec /var/www/cgi-bin/cgit
 ",
         owner   => $user,
         group   => $group,
-        mode    => '0755';
+        mode    => '0755',
+        seltype => $setype;
       "/var/www/git_suexec/${name}/gitolite-suexec-wrapper.sh":
         content => template('cgit/gitolite-suexec-wrapper.sh.erb'),
         owner   => $user,
         group   => $group,
-        mode    => '0755';
+        mode    => '0755',
+        seltype => $setype;
     }
 
     apache::vhost::template{$name:

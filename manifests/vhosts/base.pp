@@ -22,20 +22,18 @@ class cgit::vhosts::base inherits cgit::base {
       mode    => '0644';
     [ '/var/www/git_suexec',
       '/var/www/git_htpasswds', ]:
-      ensure        => 'directory',
-      require       => Package['apache'],
-      purge         => true,
-      recurse       => true,
-      force         => true,
-      owner         => root,
-      group         => 0,
-      mode          => '0644';
+      ensure  => 'directory',
+      require => Package['apache'],
+      purge   => true,
+      recurse => true,
+      force   => true,
+      owner   => root,
+      group   => 0,
+      mode    => '0644',
+      seltype => 'httpd_sys_content_t';
   }
 
   if str2bool($::selinux) {
-    File['/var/www/git_suexec']{
-      seltype => 'httpd_git_script_exec_t'
-    }
     include ::cgit::vhosts::selinux
   }
 }

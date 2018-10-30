@@ -1,8 +1,8 @@
 module cgit_gitolite 1.4;
 
 require {
-        type git_rw_content_t;
-        type git_script_t;
+        type httpd_git_rw_content_t;
+        type httpd_git_script_t;
         type tmp_t;
         type exim_spool_t;
         type ssh_home_t;
@@ -46,29 +46,29 @@ require {
         class security check_context;
 }
 
-#============= git_script_t ==============
-allow git_script_t git_rw_content_t:file { execute_no_trans execute };
+#============= httpd_git_script_t ==============
+allow httpd_git_script_t httpd_git_rw_content_t:file { execute_no_trans execute };
 
-allow git_script_t ssh_home_t:dir { write remove_name getattr search add_name };
-allow git_script_t ssh_home_t:file { ioctl read create unlink open getattr write rename setattr };
+allow httpd_git_script_t ssh_home_t:dir { write remove_name getattr search add_name };
+allow httpd_git_script_t ssh_home_t:file { ioctl read create unlink open getattr write rename setattr };
 
 # exim
 tunable_policy(`httpd_can_sendmail',`
-  mta_send_mail(git_script_t)
+  mta_send_mail(httpd_git_script_t)
 ')
-allow git_script_t git_sys_content_t:dir { write remove_name create add_name };
-allow git_script_t git_sys_content_t:file { rename write execute link create unlink execute_no_trans setattr };
-allow git_script_t git_sys_content_t:lnk_file { create unlink getattr read };
-allow git_script_t self:capability { setuid fowner chown setgid dac_override };
+allow httpd_git_script_t git_sys_content_t:dir { write remove_name create add_name };
+allow httpd_git_script_t git_sys_content_t:file { rename write execute link create unlink execute_no_trans setattr };
+allow httpd_git_script_t git_sys_content_t:lnk_file { create unlink getattr read };
+allow httpd_git_script_t self:capability { setuid fowner chown setgid dac_override };
 
 #============= git_system_t ==============
-allow git_system_t git_rw_content_t:dir { read search open getattr };
-allow git_system_t git_rw_content_t:file { read getattr open };
+allow git_system_t httpd_git_rw_content_t:dir { read search open getattr };
+allow git_system_t httpd_git_rw_content_t:file { read getattr open };
 
-list_dirs_pattern(git_script_t, git_rw_content_t, git_rw_content_t)
-read_files_pattern(git_script_t, git_rw_content_t, git_rw_content_t)
-userdom_search_user_home_dirs(git_script_t)
-files_search_var_lib(git_script_t)
+list_dirs_pattern(httpd_git_script_t, httpd_git_rw_content_t, httpd_git_rw_content_t)
+read_files_pattern(httpd_git_script_t, httpd_git_rw_content_t, httpd_git_rw_content_t)
+userdom_search_user_home_dirs(httpd_git_script_t)
+files_search_var_lib(httpd_git_script_t)
 
-files_dontaudit_getattr_tmp_dirs(git_script_t)
-auth_use_nsswitch(git_script_t)
+files_dontaudit_getattr_tmp_dirs(httpd_git_script_t)
+auth_use_nsswitch(httpd_git_script_t)

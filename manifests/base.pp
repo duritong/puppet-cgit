@@ -2,7 +2,8 @@
 class cgit::base {
   package{['cgit','highlight']:
     ensure => present,
-  }
+  } -> File['config_dir']
+  # the pkg also manages this dir
 
   file{
     '/etc/cgitrc':

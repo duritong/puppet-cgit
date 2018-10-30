@@ -1,2 +1,2 @@
 
-/var/www/git_suexec(/.*)?    --  gen_context(system_u:object_r:httpd_git_script_exec_t,s0)
+/var/www/git_suexec(/.*)?    --  gen_context(system_u:object_r:git_script_exec_t,s0)
