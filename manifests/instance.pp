@@ -1,18 +1,18 @@
 # create an instance for cgit and gitolite
 define cgit::instance(
   $base_dir,
-  $ensure           = 'present',
-  $configuration    = {},
-  $domainalias      = 'absent',
-  $ssl_mode         = false,
-  $user             = 'absent',
-  $group            = 'absent',
-  $anonymous_http   = true,
-  $cgit_options     = {},
-  $clone_prefixes   = undef,
-  $nagios_check     = false,
-  $nagios_web_check = 'OK',
-  $nagios_web_use   = 'generic-service',
+  $ensure            = 'present',
+  $configuration     = {},
+  $domainalias       = 'absent',
+  $ssl_mode          = false,
+  $user              = 'absent',
+  $group             = 'absent',
+  $anonymous_http    = true,
+  $cgit_options      = {},
+  $clone_prefixes    = undef,
+  $nagios_check      = false,
+  $nagios_check_code = 'OK',
+  $nagios_web_use    = 'generic-service',
 ) {
 
   if ($ensure == 'present') and (($user == 'absent') or ($group == 'absent')) {
@@ -124,15 +124,15 @@ exec /var/www/cgi-bin/cgit
   }
 
   if $nagios_check {
-    $nagios_check_code = $anonymous_http ? {
-      true      => $nagios_web_check,
+    $real_nagios_check_code = $anonymous_http ? {
+      true      => $nagios_check_code,
       default   => '401'
     }
     nagios::service::http{"gitweb_${name}":
       ensure       => $ensure,
       check_domain => $name,
       ssl_mode     => $ssl_mode,
-      check_code   => $nagios_check_code,
+      check_code   => $real_nagios_check_code,
       use          => $nagios_web_use,
     }
   }
