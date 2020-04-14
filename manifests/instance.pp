@@ -11,7 +11,7 @@ define cgit::instance(
   $cgit_options      = {},
   $clone_prefixes    = undef,
   $nagios_check      = false,
-  $nagios_check_code = 'OK',
+  $nagios_check_code = '200',
   $nagios_web_use    = 'generic-service',
 ) {
 
